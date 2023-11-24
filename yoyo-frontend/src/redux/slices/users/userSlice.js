@@ -1,4 +1,4 @@
-const { createSlice, createAsyncThunk, createAction, isRejectedWithValue } = require('@reduxjs/toolkit');
+const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 const { axios } = require('axios');
 const baseURL = require('../../../utils/baseURL');
 
@@ -17,24 +17,26 @@ const initialState = {
 };
 
 //create login action
-const loginUserAction = createAsyncThunk(
+export const loginUserAction = createAsyncThunk(
 	'users/login',
-	async ({ email, password }, { rejectWithValue, getState, dispatch }) => {
+	async ({ email, password, fullname }, { rejectWithValue, getState, dispatch }) => {
 		try {
-			// await http request
-			const { data } = await axios.post(`${baseURL}/users/login`, {
+			//make the http request
+			const { data } = await axios.post(`${baseURL}/users/register`, {
 				email,
 				password,
+				fullname,
 			});
 			return data;
 		} catch (error) {
-			return isRejectedWithValue(error?.response?.data);
+			console.log(error);
+			return rejectWithValue(error?.response?.data);
 		}
 	}
 );
 
 //user slice
-const userSlice = createSlice({
+export const userSlice = createSlice({
 	name: 'users',
 	initialState,
 	extraReducers: (builder) => {
